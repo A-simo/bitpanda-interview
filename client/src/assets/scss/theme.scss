@@ -1,36 +1,4 @@
 @import 'variables';
 @import 'colors';
+@import 'reset';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
-
-body
-    {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 300;
-        background-color: var(--color-grey-2);
-        margin: 0;
-        box-sizing: border-box;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-input {
-    background-color: transparent;
-    border: none;
-    outline: none;
-    font-family: 'Roboto', sans-serif;
-    padding: 0;
-    font-size: 1rem;
-}
-
-.inactive {
-    pointer-events: none;
-    opacity: .5;
-}

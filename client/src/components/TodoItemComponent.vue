@@ -1,19 +1,25 @@
 <template lang="pug">
-  .todo-item( :class="{done: todoItemData.done}")
-    button( :class="{done: todoItemData.done === true }"
-      @click="$emit('onUpdateDoneTodoItem', todoItemData)"
+  .todo-item(:class="{ 'todo-item_done': props.todoItemData.done }")
+    button.todo-item__button(
+      :class="{ 'todo-item_done': props.todoItemData.done }"
+      @click="$emit('onUpdateDoneTodoItem', props.todoItemData)"
     )
-      .todo-status-marker
-        img( v-if="todoItemData.done" src="@/assets/img/icon-tick.svg")
-    span.description {{todoItemData.description}}
-    span.todoAge {{todoAge}}
-    button( class="delete-item-button" @click="$emit('onDeleteTodoItem', todoItemData)")
-      img( src="@/assets/img/icon-cross.svg")
-    //- button( @click="deleteItem(todoItemData)") Del
+      .todo-item__status-marker
+        img.todo-item_img(
+          v-if="todoItemData.done"
+          src="@/assets/img/icon-tick.svg"
+        )
+    span.todo-item__description {{props.todoItemData.description}}
+    span.todo-item__age {{calcTodoAge()}}
+    button(
+      class="delete-item-button"
+      @click="$emit('onDeleteTodoItem', props.todoItemData._id)"
+    )
+      img(src="@/assets/img/icon-cross.svg")
 </template>
 
 <script lang="ts">
-  import { computed, defineComponent, PropType, toRefs } from '@vue/composition-api';
+  import { computed, defineComponent, PropType } from '@vue/composition-api';
   import { TodoItem, TimeUnits } from '@/interfaces';
 
 
@@ -27,39 +33,40 @@
     },
     emits: ['onDeleteTodoItem', 'onUpdateDoneTodoItem'],
     setup(props) {
-      const { todoItemData } = toRefs(props);
       const computeAgeString = (age: number, units: TimeUnits) => {
-        return age > 1 ? `${age} ${units}s` : `${age} ${units}`;
+        return `${age} ${units}${ age === 1 ? '' : 's'}`;
+        // return age === 1 ? `${age} ${units}` : `${age} ${units}s`;
       };
-      const todoAge = computed(() => {
-        let age: string| number = "";
-        const diff: number = Date.now() - Date.parse(todoItemData.value.createdAt);
+
+      function calcTodoAge() {
+        let age: string = "";
+        const diff: number = Date.now() - Date.parse(props.todoItemData.createdAt);
         if ((diff/(1000*60*60*24)) > 1) {
-          age = computeAgeString(Math.round(diff/(1000*60*60*24)), TimeUnits.day);
+          age = computeAgeString(Math.round(diff/(1000*60*60*24)), TimeUnits.Day);
         } else if ((diff/(1000*60*60)) > 1) {
-          age = computeAgeString(Math.round(diff/(1000*60*60)), TimeUnits.hour);
+          age = computeAgeString(Math.round(diff/(1000*60*60)), TimeUnits.Hour);
         } else {
-          age = computeAgeString(Math.round(diff/(1000*60)), TimeUnits.minute);
+          age = computeAgeString(Math.round(diff/(1000*60)), TimeUnits.Minute);
         }
         return age;
       }
-      );
+
+      computed(() => calcTodoAge());
+
       return {
-        todoAge,
+        calcTodoAge,
+        props
       };
     }
   });
 </script>
 
 <style lang="scss">
-
-
   .todo-item {
-    // background-color: var(--color-white);
-    padding: .5rem 1.5rem;
-    border-top: 1px solid var(--color-grey-3);
     display: flex;
     align-items: center;
+    padding: var(--space-xs) var(--space-xl);
+    border-top: 1px solid var(--color-grey-3);
 
     &:first-of-type{
       border: none;
@@ -69,46 +76,53 @@
       opacity: 1;
     }
 
-    button {
+    .todo-item__button {
       padding: 0;
     }
 
-    .description {
-      margin-left: .5rem;
+    .todo-item__description {
+      margin-left: var(--space-xs);
+    }
+
+    .todo-item__status-marker {
+      width: var(--space-xxl);
+      height: var(--space-xxl);
+      display: flex;
+      border: 1px solid var(--color-grey-3);
+      border-radius: var(--space-l);
+
+      .todo-item_img{
+        margin: auto;
+      }
+    }
+
+    .todo-item__age {
+      margin: auto var(--space-xs);
+      font-size: var(--space-s);
+      white-space: nowrap;
+    }
+
+    .delete-item-button {
+      margin-left: auto;
+      opacity: 0;
     }
   }
 
-  .done {
+  .todo-item_done {
     color: var(--color-grey-4);
 
-    .description {
+    .todo-item__description {
       text-decoration:line-through;
     }
 
-    .todo-status-marker {
+    .todo-item__status-marker {
       border-color: var(--color-green-1);
     }
   }
-  .todoAge{
-    font-size: .625rem;
-    white-space: nowrap;
-    margin: auto .5rem;
-  }
 
-  .delete-item-button {
-    margin-left: auto;
-    opacity: 0;
-  }
-
-  .todo-status-marker {
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    border: 1px solid var(--color-grey-3);
-    border-radius: 1rem;
-
-    img{
-      margin: auto;
+  @media (hover: none) {
+    .todo-item .delete-item-button  {
+      opacity: .5;
     }
   }
 </style>

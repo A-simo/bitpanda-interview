@@ -1,33 +1,37 @@
 <template lang="pug">
   .pagination-section
-    .pagination-buttons
-      button(
-        @click="$emit('onChangePage', 'prevPage')"
-        :class="{inactive: !todoData.meta.hasPrevPage }"
+    .pagination-section__button-block
+      button.pagination-section__button(
+        @click="$emit('onChangePage', Pages.Prev)"
+        :class="{ inactive: !todoMeta.hasPrevPage }"
       )
-        img( src="@/assets/img/icon-left-arrow.svg")
-      .separator
-      button(
-        @click="$emit('onChangePage', 'nextPage')"
-        :class="{inactive: !todoData.meta.hasNextPage }"
+        img.pagination-section__img(src="@/assets/img/icon-left-arrow.svg")
+      .pagination-section__separator
+      button.pagination-section__button(
+        @click="$emit('onChangePage', Pages.Next)"
+        :class="{ inactive: !todoMeta.hasNextPage }"
       )
-        img( src="@/assets/img/icon-right-arrow.svg")
+        img.pagination-section__img(src="@/assets/img/icon-right-arrow.svg")
 </template>
 
 <script lang="ts">
   import { defineComponent, PropType } from '@vue/composition-api';
-  import { TodoList } from '@/interfaces';
+  import { TodoMeta, Pages } from '@/interfaces';
 
   export default defineComponent({
     name: 'Pagination',
     props: {
-      todoData: {
-        type: Object as PropType<TodoList>,
+      todoMeta: {
+        type: Object as PropType<TodoMeta>,
         required: true
       }
     },
-    emits: ['onChangePage']
-
+    emits: ['onChangePage'],
+    setup() {
+      return {
+        Pages
+      };
+    }
   });
 </script>
 
@@ -36,26 +40,26 @@
     display: flex;
     justify-content: flex-end;
 
-    .pagination-buttons {
+    .pagination-section__button-block {
       background-color: var(--color-white);
       display: flex;
       align-items: center;
-      padding: .5rem 0;
+      padding: var(--space-xs) 0;
       border: 1px solid var(--color-grey-3);
-      border-radius: .75rem;
+      border-radius: var(--space-m);
 
-      button {
-        padding: 0 .75rem;
+      .pagination-section__button {
+        padding: 0 var(--space-m);
         display: flex;
       }
 
-      img {
+      .pagination-section__img {
         height: 20px;
       }
 
-      .separator {
-      border-left: 1px solid var(--color-grey-5);
-      height: 100%;
+      .pagination-section__separator {
+        border-left: 1px solid var(--color-grey-5);
+        height: 100%;
       }
     }
   }

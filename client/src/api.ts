@@ -3,23 +3,25 @@ import { TodoList, TodoItem } from '@/interfaces';
 
 const url = 'http://localhost:3000/api/v1/todo/';
 
-export function getTodoDataApi(variable: Ref<TodoList | null>,
+export function getTodoData(variable: Ref<TodoList | null>,
   searchString: string, offset: number) {
   fetch(`${url}?offset=${offset}&description=${searchString}`)
     .then((r) => r.json())
     .then((j:TodoList) => variable.value = j)
-    .catch((error) => console.log(error));
+    .catch((error) => console.log(error)); // eslint-disable-line no-console
 }
 
-export function deleteTodoItemApi(item: TodoItem, onSuccess: Function) {
-  fetch(`${url}${item._id}`, { method: 'DELETE' })
+export function deleteTodoItem(id: string, onSuccess: Function) {
+  fetch(`${url}${id}`, {
+    method: 'DELETE'
+  })
     .then((r) => { if(r.ok) {
       onSuccess();
     }})
-    .catch((error) => console.log(error));
+    .catch((error) => console.log(error)); // eslint-disable-line no-console
 }
 
-export function updateDoneStatusApi(item: TodoItem, onSuccess: Function) {
+export function updateDoneStatus(item: TodoItem, onSuccess: Function) {
   fetch(`${url}${item._id}`, {
     method: 'PUT',
     headers: {
@@ -33,10 +35,10 @@ export function updateDoneStatusApi(item: TodoItem, onSuccess: Function) {
       onSuccess();
     }
   })
-  .catch((error) => console.log(error));
+  .catch((error) => console.log(error)); // eslint-disable-line no-console
 }
 
-export function createNewTodoApi(descr: string, onSuccess: Function) {
+export function createNewTodo(descr: string, onSuccess: Function) {
   fetch(url, {
     method: 'POST',
     headers: {
@@ -46,19 +48,20 @@ export function createNewTodoApi(descr: string, onSuccess: Function) {
       description: descr
     })
   })
-  .then((r) => { if (r.ok) {
-      return r.json();
-    }
-    return null;
-  }).then(() => onSuccess() )
-  .catch((error) => console.log(error));
+    .then((r) => { if (r.ok) {
+        return r.json();
+      }
+      return null;
+    })
+    .then(() => onSuccess() )
+    .catch((error) => console.log(error)); // eslint-disable-line no-console
 }
 
-export function changePaginationApi(offset: number,
+export function changePagination(offset: number,
 variable: Ref<TodoList | null>,
 searchString: string) {
   fetch(`${url}?offset=${offset}&description=${searchString}`)
   .then((r) => r.json())
   .then((j:TodoList) => variable.value = j)
-  .catch((error) => console.log(error));
+  .catch((error) => console.log(error)); // eslint-disable-line no-console
 }
